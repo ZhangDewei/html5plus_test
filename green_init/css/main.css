@@ -1,0 +1,23 @@
+html, body{
+	padding:0;margin:0;
+}
+
+.mui-bar-nav {
+	background-color: rgb(107,194,53);
+}
+
+.mui-title {
+	color: #ffffff;
+	font-size: 1.2rem;
+	font-weight:bolder;
+}
+
+.mui-content {
+	width: 100%;
+	display:block;
+	position: relative;
+}
+
+a {
+	color:#ffffff;
+}

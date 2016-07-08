@@ -1,0 +1,57 @@
+.top-img-parent {
+	width: 100%;
+	text-align: center;
+	height: 12rem;
+	margin-bottom: 1rem;
+}
+
+#top-img{
+	height:12rem;
+	display: block;
+	vertical-align: top;
+	margin: 0 auto;
+}
+
+.middle-content {
+	width: 90%;
+	margin: 0 auto;
+	border-top: 1px solid #5c5c5c;
+}
+
+#original-price, #price {
+	display: inline-block;
+}
+
+#price {
+	margin-left: 0.5rem;
+}
+
+#desc {
+	font-size: 1rem;
+	border-top: 1px solid #5c5c5c;
+	padding-top: .5rem;
+	width:100%;
+	word-wrap:break-word;
+}
+
+footer {
+	width: 100%;
+	height: 3rem;
+	background-color: rgb(107,194,53);
+	position: fixed;
+	left:0;
+	bottom:0;
+}
+
+#call {
+	width: 35%;
+	height: 2.5rem;
+	line-height: 2.5rem;
+	padding: 0 1rem;
+	margin: .25rem auto 0 auto;
+	color: #ffffff;
+	border: 1px solid #ffffff;
+	border-radius: 18px;
+	text-align: center;
+	cursor: pointer;
+}

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>产品</title>
+    <script src="../js/jquery-1.12.4.min.js"></script>
+    <script src="../js/mui.min.js"></script>
+    <script src="../js/react.js"></script>
+    <script src="../js/react-dom.js"></script>
+    <script src="../js/react-with-addons.js"></script>
+    <script src="../js/browser.js"></script>
+    <link href="../css/mui.css" rel="stylesheet"/>
+    <link href="../css/main.css" rel="stylesheet"  />
+    <link href="../css/projects.css" rel="stylesheet"  />
+    <script type="text/javascript" charset="UTF-8">
+    </script>
+</head>
+<body id="body">
+	<div class="mui-content" id="content">
+	</div>
+</body>
+<script src="./js/tools/request.js"></script>
+<script src="./js/tools/md5.js"></script>
+<script src="./js/configs/configs.js"></script>
+<script type="text/babel">
+	var ProjectArea = React.createClass({
+		getInitialState: function(){
+			var time = new Date().getTime();
+			var token = $.md5(settings.appId + settings.appKey + settings.masterKey + time);
+			var data = null;
+			mui.ajax({
+				url: settings.apiServer  + 'projects/get_projects',
+				data:{},
+				headers: {token: token, time:time},
+				crossDomain: true,
+				type:'get',
+				async: false,
+				success: function(result){
+					if(result.r){
+						data = result.data;
+					}else{
+						mui.alert(result.error);
+					}
+				}
+			})
+			return {
+				data: data
+			}
+		},
+		render: function(){
+			var items = [];
+			this.state.data.forEach(function(p, i){
+				items.push(<Projects key={p.url} status={p.style}  imgUrl={p.url} name={p.name} price={p.price} originalPrice={p.original_price} desc={p.desc} projectId={p.id_} />)
+			});
+			return (
+				<div className="project-area">
+					{items}
+			    </div>
+			)
+		},
+		componentDidMount: function(){
+			var THIS = this;
+			
+			$('.project-img').on('tap', function(event){
+				var _this = this;
+				var url = _this.dataset.url;
+				
+				mui.openWindow({
+					url: url,
+					id: url,
+					extras:{
+						objectId: _this.dataset.id,
+						title: _this.dataset.name,
+						desc: _this.dataset.desc,
+						originalPrice: _this.dataset.originalprice,
+						price: _this.dataset.price,
+						img: _this.dataset.img,
+						status: _this.dataset.status
+					},
+					show:{
+				      autoShow:true,//页面loaded事件发生后自动显示，默认为true
+				      aniShow:'slide-in-right',//页面显示动画，默认为”slide-in-right“；
+				      duration:400
+				    },
+				})
+			});
+			
+			mui.init({
+				gestureConfig:{
+					tap: true,
+					doubletap: true,
+					longtap: true,
+					swipe: true,
+					drag: true
+				},
+				pullRefresh:{
+					container:"#content",//下拉刷新容器标识，querySelector能定位的css选择器均可，比如：id、.class等
+					tap: true,
+				    down : {
+				      height:50,//可选,默认50.触发下拉刷新拖动距离,
+				      auto: false,//可选,默认false.自动下拉刷新一次
+				      contentdown : "",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+				      contentover : "",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+				      contentrefresh : "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+				      callback : function(){
+				      	var time = new Date().getTime();
+						var token = $.md5(settings.appId + settings.appKey + settings.masterKey + time);
+						var data = null;
+
+						$.ajax({
+							url: settings.apiServer  + 'projects/get_projects',
+							data:{},
+							headers: {token: token, time:time}, 
+							crossDomain: true,
+							type:'get',
+							async: false,
+							success: function(result){
+								if(result.r){
+									data = result.data;
+									THIS.setState({data: data})
+									mui('#content').pullRefresh().endPulldownToRefresh();
+								}else{
+									mui.alert(result.error);
+									mui('#content').pullRefresh().endPulldownToRefresh();
+								}
+							}
+						})
+				      	
+				      }
+				    }
+				}
+			})
+		}
+	});
+	
+	var Projects = React.createClass({
+		render: function(){
+			return (
+				<div className="project" key={this.props.key}>
+				  <div className="project-img" style={{backgroundImage: 'url('+this.props.imgUrl+')'}} 
+				  	data-id={this.props.projectId} data-url="./project_content.html" 
+				  	data-name={this.props.name} data-price={this.props.price} data-originalprice={this.props.originalPrice}
+				  	data-img={this.props.imgUrl} data-desc={this.props.desc} data-status={this.props.status}
+				  	></div>
+				  <div className="project-info">
+					  <span>名称：{this.props.name}  {this.props.originalPrice}元/盆</span><br  />
+					  <span>类型：{this.props.status}</span><br  />
+					  <span>描述：{this.props.desc}</span>
+				  </div>
+			  </div>
+			)
+		}
+		
+	});
+	
+	ReactDOM.render(
+		<ProjectArea />,
+		document.getElementById('content')
+	)
+</script>
+</html>
